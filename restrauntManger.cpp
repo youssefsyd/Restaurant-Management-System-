@@ -92,6 +92,17 @@ string deliveryStatusToString(DeliveryStatus s) {
     return "Unknown";
 }
 
+string employeeRoleToString(EmployeeRole role) {
+    switch (role) {
+    case EmployeeRole::Manager: return "Manager";
+    case EmployeeRole::Chef: return "Chef";
+    case EmployeeRole::Waiter: return "Waiter";
+    case EmployeeRole::Cashier: return "Cashier";
+    case EmployeeRole::DeliveryDriver: return "Delivery Driver";
+    }
+    return "Unknown";
+}
+
 string getCurrentDateTime() {
     time_t now = time(0);
     tm* ltm = localtime(&now);
@@ -136,12 +147,16 @@ namespace UI {
     void error(const string& message) { cout << RED << "[ERROR] " << message << RESET << "\n"; }
     void warning(const string& message) { cout << YELLOW << "[WARNING] " << message << RESET << "\n"; }
 
+    void breadcrumb(const string& path) {
+        cout << CYAN << "Restaurant > " << path << RESET << "\n\n";
+    }
+
     void title(const string& text) {
         cout << CYAN << BOLD
-             << "\n============================================================\n"
-             << "  " << text << "\n"
-             << "============================================================\n"
-             << RESET;
+            << "\n============================================================\n"
+            << "  " << text << "\n"
+            << "============================================================\n"
+            << RESET;
     }
 
     void pause() {
@@ -230,7 +245,7 @@ namespace UI {
 
     bool isValidPhone(const string& phone) {
         if (phone.size() < 7 || phone.size() > 15) return false;
-        if (!all_of(phone.begin(), phone.end(), [](unsigned char c){ return isdigit(c); })) return false;
+        if (!all_of(phone.begin(), phone.end(), [](unsigned char c) { return isdigit(c); })) return false;
         return true;
     }
 
@@ -244,15 +259,15 @@ namespace UI {
 
     bool isValidDate(const string& date) {
         if (date.size() != 10 || date[4] != '-' || date[7] != '-') return false;
-        for (size_t i=0; i<date.size(); ++i) {
+        for (size_t i = 0; i < date.size(); ++i) {
             if (i == 4 || i == 7) continue;
             if (!isdigit(static_cast<unsigned char>(date[i]))) return false;
         }
-        int year = stoi(date.substr(0,4));
-        int month = stoi(date.substr(5,2));
-        int day = stoi(date.substr(8,2));
+        int year = stoi(date.substr(0, 4));
+        int month = stoi(date.substr(5, 2));
+        int day = stoi(date.substr(8, 2));
         if (year < 2000 || month < 1 || month > 12 || day < 1) return false;
-        int daysInMonth[] = {31,28,31,30,31,30,31,31,30,31,30,31};
+        int daysInMonth[] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
         bool leap = (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
         if (leap) daysInMonth[1] = 29;
         return day <= daysInMonth[month - 1];
@@ -268,11 +283,11 @@ namespace UI {
 
     bool isValidTime(const string& value) {
         if (value.size() != 5 || value[2] != ':') return false;
-        for (size_t i=0; i<value.size(); ++i) {
+        for (size_t i = 0; i < value.size(); ++i) {
             if (i == 2) continue;
             if (!isdigit(static_cast<unsigned char>(value[i]))) return false;
         }
-        int h = stoi(value.substr(0,2)), m = stoi(value.substr(3,2));
+        int h = stoi(value.substr(0, 2)), m = stoi(value.substr(3, 2));
         return h >= 0 && h <= 23 && m >= 0 && m <= 59;
     }
 
@@ -357,19 +372,19 @@ public:
         }
 
         cout << left
-             << setw(8) << "ID"
-             << setw(24) << "Name"
-             << setw(18) << "Phone"
-             << setw(32) << "Address"
-             << setw(30) << "Email" << "\n";
+            << setw(8) << "ID"
+            << setw(24) << "Name"
+            << setw(18) << "Phone"
+            << setw(32) << "Address"
+            << setw(30) << "Email" << "\n";
         cout << string(112, '-') << "\n";
         for (const auto& cust : customers) {
             cout << left
-                 << setw(8) << cust.getCustomerID()
-                 << setw(24) << cust.getName()
-                 << setw(18) << cust.getPhoneNumber()
-                 << setw(32) << cust.getAddress()
-                 << setw(30) << cust.getEmail() << "\n";
+                << setw(8) << cust.getCustomerID()
+                << setw(24) << cust.getName()
+                << setw(18) << cust.getPhoneNumber()
+                << setw(32) << cust.getAddress()
+                << setw(30) << cust.getEmail() << "\n";
         }
     }
 
@@ -1541,6 +1556,7 @@ public:
         cout << "Employee ID: " << employeeID << endl;
         cout << "Name: " << name << endl;
         cout << "Phone: " << phoneNumber << endl;
+        cout << "Role: " << employeeRoleToString(role) << endl;
         cout << "Salary: " << salary << endl;
     }
 };
@@ -1558,6 +1574,7 @@ public:
         cout << "Employee ID: " << employeeID << endl;
         cout << "Name: " << name << endl;
         cout << "Phone: " << phoneNumber << endl;
+        cout << "Role: " << employeeRoleToString(role) << endl;
         cout << "Salary: " << salary << endl;
     }
 };
@@ -1575,6 +1592,7 @@ public:
         cout << "Employee ID: " << employeeID << endl;
         cout << "Name: " << name << endl;
         cout << "Phone: " << phoneNumber << endl;
+        cout << "Role: " << employeeRoleToString(role) << endl;
         cout << "Salary: " << salary << endl;
     }
 };
@@ -1592,6 +1610,7 @@ public:
         cout << "Employee ID: " << employeeID << endl;
         cout << "Name: " << name << endl;
         cout << "Phone: " << phoneNumber << endl;
+        cout << "Role: " << employeeRoleToString(role) << endl;
         cout << "Salary: " << salary << endl;
     }
 };
@@ -1608,6 +1627,7 @@ public:
         cout << "Employee ID: " << employeeID << endl;
         cout << "Name: " << name << endl;
         cout << "Phone: " << phoneNumber << endl;
+        cout << "Role: " << employeeRoleToString(role) << endl;
         cout << "Salary: " << salary << endl;
     }
 };
@@ -1988,6 +2008,14 @@ public:
             return -1;
         }
 
+        for (const auto& existing : payments) {
+            if (existing.getOrderID() == orderID &&
+                existing.getStatus() == PaymentStatus::Completed) {
+                cout << "Error: this order has already been paid.\n";
+                return -1;
+            }
+        }
+
         Payment p(nextPaymentID, orderID, amount, method, getCurrentDateTime(), PaymentStatus::Completed);
         payments.push_back(p);
         cout << "Payment recorded successfully! Payment ID: " << nextPaymentID << "\n";
@@ -2273,7 +2301,7 @@ public:
 
 
 // ============================================================================
-// ReportManager class — Owner: Kareem
+// ReportManager class 
 // Reads data from OrderManager, PaymentManager, EmployeeManager, DeliveryManager.
 // Built last because it needs everyone else's data to already exist.
 // ============================================================================
@@ -2435,10 +2463,130 @@ private:
         UI::pause();
     }
 
+    Customer* readCustomerByID()
+    {
+        while (true)
+        {
+            int id = UI::readInt("Enter Customer ID: ", 1, 2147483647);
+            Customer* customer = customerManager.searchCustomer(id);
+
+            if (customer)
+                return customer;
+
+            UI::error("Customer not found.");
+            cout << "Please enter a valid Customer ID.\n";
+        }
+    }
+
+    Table* readTableByID()
+    {
+        while (true)
+        {
+            int id = UI::readInt("Enter Table ID: ", 1, 2147483647);
+            Table* table = tableManager.searchTable(id);
+
+            if (table)
+                return table;
+
+            UI::error("Table not found.");
+            cout << "Please enter a valid Table ID.\n";
+        }
+    }
+
+    MenuItem* readMenuItemByID()
+    {
+        while (true)
+        {
+            int id = UI::readInt("Enter Item ID: ", 1, 2147483647);
+            MenuItem* item = menuManager.searchItem(id);
+
+            if (item)
+                return item;
+
+            UI::error("Menu item not found.");
+            cout << "Please enter a valid Item ID.\n";
+        }
+    }
+
+    Order* readOrderByID()
+    {
+        while (true)
+        {
+            int id = UI::readInt("Enter Order ID: ", 1, 2147483647);
+            Order* order = orderManager.searchOrder(id);
+
+            if (order)
+                return order;
+
+            UI::error("Order not found.");
+            cout << "Please enter a valid Order ID.\n";
+        }
+    }
+
+    Reservation* readReservationByID()
+    {
+        while (true)
+        {
+            int id = UI::readInt("Enter Reservation ID: ", 1, 2147483647);
+            Reservation* reservation = reservationManager.searchReservation(id);
+
+            if (reservation)
+                return reservation;
+
+            UI::error("Reservation not found.");
+            cout << "Please enter a valid Reservation ID.\n";
+        }
+    }
+
+    Employee* readEmployeeByID()
+    {
+        while (true)
+        {
+            int id = UI::readInt("Enter Employee ID: ", 1, 2147483647);
+            Employee* employee = employeeManager.findEmployeeByID(id);
+
+            if (employee)
+                return employee;
+
+            UI::error("Employee not found.");
+            cout << "Please enter a valid Employee ID.\n";
+        }
+    }
+
+    Payment* readPaymentByID()
+    {
+        while (true)
+        {
+            int id = UI::readInt("Enter Payment ID: ", 1, 2147483647);
+            Payment* payment = paymentManager.searchPayment(id);
+
+            if (payment)
+                return payment;
+
+            UI::error("Payment not found.");
+            cout << "Please enter a valid Payment ID.\n";
+        }
+    }
+
+    Delivery* readDeliveryByID()
+    {
+        while (true)
+        {
+            int id = UI::readInt("Enter Delivery ID: ", 1, 2147483647);
+            Delivery* delivery = deliveryManager.searchDelivery(id);
+
+            if (delivery)
+                return delivery;
+
+            UI::error("Delivery not found.");
+            cout << "Please enter a valid Delivery ID.\n";
+        }
+    }
+
 public:
     RestaurantSystem()
         : kitchen(orderManager),
-          reportManager(orderManager, paymentManager, employeeManager, deliveryManager)
+        reportManager(orderManager, paymentManager, employeeManager, deliveryManager)
     {
     }
 
@@ -2450,16 +2598,16 @@ public:
             menuTitle("RESTAURANT MANAGEMENT SYSTEM");
 
             cout << "1. Customer Management\n"
-                 << "2. Table Management\n"
-                 << "3. Menu Management\n"
-                 << "4. Reservation Management\n"
-                 << "5. Order Management\n"
-                 << "6. Employee Management\n"
-                 << "7. Kitchen Management\n"
-                 << "8. Payment Management\n"
-                 << "9. Delivery Management\n"
-                 << "10. Reports\n"
-                 << "0. Exit\n";
+                << "2. Table Management\n"
+                << "3. Menu Management\n"
+                << "4. Reservation Management\n"
+                << "5. Order Management\n"
+                << "6. Employee Management\n"
+                << "7. Kitchen Management\n"
+                << "8. Payment Management\n"
+                << "9. Delivery Management\n"
+                << "10. Reports\n"
+                << "0. Exit\n";
 
             int choice = UI::readInt("Choice: ", 0, 10);
 
@@ -2512,12 +2660,13 @@ private:
         {
             clearScreen();
             menuTitle("CUSTOMER MANAGEMENT");
+            UI::breadcrumb("Customer Management");
 
             cout << "1. Add Customer\n"
-                 << "2. Display All\n"
-                 << "3. Search Customer\n"
-                 << "4. Update Customer\n"
-                 << "0. Back\n";
+                << "2. Display All\n"
+                << "3. Search Customer\n"
+                << "4. Update Customer\n"
+                << "0. Back\n";
 
             int choice = UI::readInt("Choice: ", 0, 4);
 
@@ -2570,17 +2719,16 @@ private:
             {
                 menuTitle("SEARCH CUSTOMER BY");
                 cout << "1. Customer ID\n"
-                     << "2. Phone Number\n"
-                     << "3. Email\n"
-                     << "0. Back\n";
+                    << "2. Phone Number\n"
+                    << "3. Email\n"
+                    << "0. Back\n";
 
                 int searchChoice = UI::readInt("Choice: ", 0, 3);
                 Customer* customer = nullptr;
 
                 if (searchChoice == 1)
                 {
-                    int id = UI::readInt("Enter Customer ID: ", 1, 2147483647);
-                    customer = customerManager.searchCustomer(id);
+                    customer = readCustomerByID();
                 }
                 else if (searchChoice == 2)
                 {
@@ -2598,21 +2746,21 @@ private:
                     if (customer)
                     {
                         cout << left
-                             << setw(8) << "ID"
-                             << setw(24) << "Name"
-                             << setw(18) << "Phone"
-                             << setw(32) << "Address"
-                             << setw(30) << "Email"
-                             << "\n"
-                             << string(112, '-') << "\n";
+                            << setw(8) << "ID"
+                            << setw(24) << "Name"
+                            << setw(18) << "Phone"
+                            << setw(32) << "Address"
+                            << setw(30) << "Email"
+                            << "\n"
+                            << string(112, '-') << "\n";
 
                         cout << left
-                             << setw(8) << customer->getCustomerID()
-                             << setw(24) << customer->getName()
-                             << setw(18) << customer->getPhoneNumber()
-                             << setw(32) << customer->getAddress()
-                             << setw(30) << customer->getEmail()
-                             << "\n";
+                            << setw(8) << customer->getCustomerID()
+                            << setw(24) << customer->getName()
+                            << setw(18) << customer->getPhoneNumber()
+                            << setw(32) << customer->getAddress()
+                            << setw(30) << customer->getEmail()
+                            << "\n";
                     }
                     else
                     {
@@ -2624,37 +2772,95 @@ private:
             }
             else if (choice == 4)
             {
-                int id = UI::readInt("Enter Customer ID: ", 1, 2147483647);
+                UI::breadcrumb("Customer Management > Update Customer");
 
-                if (!customerManager.searchCustomer(id))
+                while (true)
                 {
-                    UI::error("Customer not found.");
+                    int id = UI::readInt("Enter Customer ID: ", 1, 2147483647);
+
+                    if (!customerManager.searchCustomer(id))
+                    {
+                        UI::error("Customer not found.");
+                        cout << "Please enter a valid Customer ID.\n";
+                        continue;
+                    }
+
+                    cout << "1. Update Name\n"
+                        << "2. Update Phone Number\n"
+                        << "3. Update Address\n"
+                        << "4. Update Email\n"
+                        << "5. Update All Information\n"
+                        << "0. Back/Cancel\n";
+
+                    int field = UI::readInt("Choice: ", 0, 5);
+
+                    if (field == 0)
+                        break;
+
+                    Customer* customer = customerManager.searchCustomer(id);
+
+                    if (field == 1)
+                    {
+                        customer->setName(UI::readRequired("New Name: "));
+                        UI::success("Customer name updated successfully.");
+                    }
+                    else if (field == 2)
+                    {
+                        string phone = UI::readPhone("New Phone: ");
+
+                        if (customerManager.isPhoneUsed(phone, id))
+                        {
+                            UI::error("Phone number already exists.");
+                            continue;
+                        }
+
+                        customer->setPhoneNumber(phone);
+                        UI::success("Customer phone number updated successfully.");
+                    }
+                    else if (field == 3)
+                    {
+                        customer->setAddress(UI::readRequired("New Address: "));
+                        UI::success("Customer address updated successfully.");
+                    }
+                    else if (field == 4)
+                    {
+                        string email = UI::readEmail("New Email: ");
+
+                        if (customerManager.isEmailUsed(email, id))
+                        {
+                            UI::error("Email already exists.");
+                            continue;
+                        }
+
+                        customer->setEmail(email);
+                        UI::success("Customer email updated successfully.");
+                    }
+                    else
+                    {
+                        string name = UI::readRequired("New Name: ");
+                        string phone = UI::readPhone("New Phone: ");
+
+                        if (customerManager.isPhoneUsed(phone, id))
+                        {
+                            UI::error("Phone number already exists.");
+                            continue;
+                        }
+
+                        string address = UI::readRequired("New Address: ");
+                        string email = UI::readEmail("New Email: ");
+
+                        if (customerManager.isEmailUsed(email, id))
+                        {
+                            UI::error("Email already exists.");
+                            continue;
+                        }
+
+                        customerManager.updateCustomer(id, name, phone, address, email);
+                    }
+
                     pause();
-                    continue;
+                    break;
                 }
-
-                string name = UI::readRequired("New Name: ");
-                string phone = UI::readPhone("New Phone: ");
-
-                if (customerManager.isPhoneUsed(phone, id))
-                {
-                    UI::error("Phone number already exists.");
-                    pause();
-                    continue;
-                }
-
-                string address = UI::readRequired("New Address: ");
-                string email = UI::readEmail("New Email: ");
-
-                if (customerManager.isEmailUsed(email, id))
-                {
-                    UI::error("Email already exists.");
-                    pause();
-                    continue;
-                }
-
-                customerManager.updateCustomer(id, name, phone, address, email);
-                pause();
             }
         }
     }
@@ -2665,13 +2871,14 @@ private:
         {
             clearScreen();
             menuTitle("TABLE MANAGEMENT");
+            UI::breadcrumb("Table Management");
 
             cout << "1. Add Table\n"
-                 << "2. Display Available\n"
-                 << "3. Search Table\n"
-                 << "4. Update Status\n"
-                 << "5. Assign Table\n"
-                 << "0. Back\n";
+                << "2. Display Available\n"
+                << "3. Search Table\n"
+                << "4. Update Status\n"
+                << "5. Assign Table\n"
+                << "0. Back\n";
 
             int choice = UI::readInt("Choice: ", 0, 5);
 
@@ -2702,7 +2909,7 @@ private:
                 }
 
                 if (tableManager.addTable(
-                        Table(id, capacity, location, TableStatus::Available)))
+                    Table(id, capacity, location, TableStatus::Available)))
                 {
                     UI::success("Table added successfully.");
                 }
@@ -2720,53 +2927,68 @@ private:
             }
             else if (choice == 3)
             {
-                int id = UI::readInt("Enter Table ID: ", 1, 2147483647);
-                Table* table = tableManager.searchTable(id);
-
-                if (table)
+                UI::breadcrumb("Table Management > Search Table");
+                while (true)
                 {
+                    int id = UI::readInt("Enter Table ID: ", 1, 2147483647);
+                    Table* table = tableManager.searchTable(id);
+
+                    if (!table)
+                    {
+                        UI::error("Table not found.");
+                        cout << "Please enter a valid Table ID.\n";
+                        continue;
+                    }
+
                     cout << "ID: " << table->getTableID()
-                         << " | Capacity: " << table->getCapacity()
-                         << " | Location: " << table->getLocation()
-                         << " | Status: " << table->getStatusString() << "\n";
+                        << " | Capacity: " << table->getCapacity()
+                        << " | Location: " << table->getLocation()
+                        << " | Status: " << table->getStatusString() << "\n";
+                    break;
                 }
-                else
-                {
-                    UI::error("Table not found.");
-                }
-
                 pause();
             }
             else if (choice == 4)
             {
-                int id = UI::readInt("Enter Table ID: ", 1, 2147483647);
-
-                if (!tableManager.searchTable(id))
+                UI::breadcrumb("Table Management > Update Status");
+                while (true)
                 {
-                    UI::error("Table not found.");
-                    pause();
-                    continue;
-                }
+                    int id = UI::readInt("Enter Table ID: ", 1, 2147483647);
 
-                int status = UI::readInt(
-                    "New Status (0=Available,1=Reserved,2=Occupied,3=OutOfService): ",
-                    0, 3);
+                    if (!tableManager.searchTable(id))
+                    {
+                        UI::error("Table not found.");
+                        cout << "Please enter a valid Table ID.\n";
+                        continue;
+                    }
 
-                if (tableManager.updateTableStatus(id, (TableStatus)status))
-                {
-                    UI::success("Table status updated successfully.");
-                }
-                else
-                {
-                    UI::error("Could not update status.");
-                }
+                    int status = UI::readInt(
+                        "New Status (0=Available,1=Reserved,2=Occupied,3=OutOfService): ",
+                        0, 3);
 
+                    if (tableManager.updateTableStatus(id, (TableStatus)status))
+                        UI::success("Table status updated successfully.");
+                    break;
+                }
                 pause();
             }
             else if (choice == 5)
             {
-                int id = UI::readInt("Enter Table ID: ", 1, 2147483647);
-                tableManager.assignTable(id);
+                UI::breadcrumb("Table Management > Assign Table");
+                while (true)
+                {
+                    int id = UI::readInt("Enter Table ID: ", 1, 2147483647);
+
+                    if (!tableManager.searchTable(id))
+                    {
+                        UI::error("Table not found.");
+                        cout << "Please enter a valid Table ID.\n";
+                        continue;
+                    }
+
+                    tableManager.assignTable(id);
+                    break;
+                }
                 pause();
             }
         }
@@ -2778,13 +3000,14 @@ private:
         {
             clearScreen();
             menuTitle("MENU MANAGEMENT");
+            UI::breadcrumb("Menu Management");
 
             cout << "1. Add Item\n"
-                 << "2. Remove Item\n"
-                 << "3. Search Item\n"
-                 << "4. Display Menu\n"
-                 << "5. Change Availability\n"
-                 << "0. Back\n";
+                << "2. Remove Item\n"
+                << "3. Search Item\n"
+                << "4. Display Menu\n"
+                << "5. Change Availability\n"
+                << "0. Back\n";
 
             int choice = UI::readInt("Choice: ", 0, 5);
 
@@ -2826,7 +3049,7 @@ private:
                 }
 
                 if (menuManager.addItem(
-                        MenuItem(id, name, price, (MenuCategory)category, description, true)))
+                    MenuItem(id, name, price, (MenuCategory)category, description, true)))
                 {
                     UI::success("Item added successfully.");
                 }
@@ -2839,26 +3062,24 @@ private:
             }
             else if (choice == 2)
             {
-                int id = UI::readInt("Enter Item ID: ", 1, 2147483647);
+                UI::breadcrumb("Menu Management > Remove Item");
+                MenuItem* item = readMenuItemByID();
 
-                if (menuManager.removeItem(id))
+                if (menuManager.removeItem(item->getItemID()))
                     UI::success("Item removed successfully.");
-                else
-                    UI::error("Item not found.");
 
                 pause();
             }
             else if (choice == 3)
             {
-                int id = UI::readInt("Enter Item ID: ", 1, 2147483647);
-                MenuItem* item = menuManager.searchItem(id);
+                MenuItem* item = readMenuItemByID();
 
                 if (item)
                 {
                     cout << "ID: " << item->getItemID()
-                         << " | " << item->getName()
-                         << " | Price: " << fixed << setprecision(2) << item->getPrice()
-                         << " | " << item->getCategoryString() << "\n";
+                        << " | " << item->getName()
+                        << " | Price: " << fixed << setprecision(2) << item->getPrice()
+                        << " | " << item->getCategoryString() << "\n";
                 }
                 else
                 {
@@ -2874,21 +3095,12 @@ private:
             }
             else if (choice == 5)
             {
-                int id = UI::readInt("Enter Item ID: ", 1, 2147483647);
-
-                if (!menuManager.searchItem(id))
-                {
-                    UI::error("Item not found.");
-                    pause();
-                    continue;
-                }
-
+                UI::breadcrumb("Menu Management > Change Availability");
+                MenuItem* item = readMenuItemByID();
                 int available = UI::readInt("Available? (1=Yes,0=No): ", 0, 1);
 
-                if (menuManager.changeAvailability(id, available == 1))
+                if (menuManager.changeAvailability(item->getItemID(), available == 1))
                     UI::success("Availability updated successfully.");
-                else
-                    UI::error("Could not update availability.");
 
                 pause();
             }
@@ -2901,12 +3113,13 @@ private:
         {
             clearScreen();
             menuTitle("RESERVATION MANAGEMENT");
+            UI::breadcrumb("Reservation Management");
 
             cout << "1. Create Reservation\n"
-                 << "2. Confirm\n"
-                 << "3. Cancel\n"
-                 << "4. Display All\n"
-                 << "0. Back\n";
+                << "2. Confirm\n"
+                << "3. Cancel\n"
+                << "4. Display All\n"
+                << "0. Back\n";
 
             int choice = UI::readInt("Choice: ", 0, 4);
 
@@ -2917,6 +3130,7 @@ private:
 
             if (choice == 1)
             {
+                UI::breadcrumb("Reservation Management > Create Reservation");
                 int reservationId = UI::readInt("Enter Reservation ID: ", 1, 2147483647);
 
                 if (reservationManager.searchReservation(reservationId))
@@ -2926,6 +3140,7 @@ private:
                     continue;
                 }
 
+                UI::breadcrumb("Order Management > Create Order");
                 int customerId = UI::readInt("Enter Customer ID: ", 1, 2147483647);
 
                 if (!customerManager.searchCustomer(customerId))
@@ -2966,20 +3181,42 @@ private:
 
                 reservationManager.createReservation(
                     Reservation(reservationId, customerId, tableId,
-                                date, time, guests, ReservationStatus::Pending));
+                        date, time, guests, ReservationStatus::Pending));
 
                 pause();
             }
             else if (choice == 2)
             {
-                int id = UI::readInt("Enter Reservation ID: ", 1, 2147483647);
-                reservationManager.confirmReservation(id);
+                UI::breadcrumb("Reservation Management > Confirm Reservation");
+                while (true)
+                {
+                    int id = UI::readInt("Enter Reservation ID: ", 1, 2147483647);
+                    if (!reservationManager.searchReservation(id))
+                    {
+                        UI::error("Reservation not found.");
+                        cout << "Please enter a valid Reservation ID.\n";
+                        continue;
+                    }
+                    reservationManager.confirmReservation(id);
+                    break;
+                }
                 pause();
             }
             else if (choice == 3)
             {
-                int id = UI::readInt("Enter Reservation ID: ", 1, 2147483647);
-                reservationManager.cancelReservation(id);
+                UI::breadcrumb("Reservation Management > Cancel Reservation");
+                while (true)
+                {
+                    int id = UI::readInt("Enter Reservation ID: ", 1, 2147483647);
+                    if (!reservationManager.searchReservation(id))
+                    {
+                        UI::error("Reservation not found.");
+                        cout << "Please enter a valid Reservation ID.\n";
+                        continue;
+                    }
+                    reservationManager.cancelReservation(id);
+                    break;
+                }
                 pause();
             }
             else if (choice == 4)
@@ -2996,14 +3233,15 @@ private:
         {
             clearScreen();
             menuTitle("ORDER MANAGEMENT");
+            UI::breadcrumb("Order Management");
 
             cout << "1. Create Order\n"
-                 << "2. Add Item\n"
-                 << "3. Update Status\n"
-                 << "4. Cancel Order\n"
-                 << "5. Display Order\n"
-                 << "6. List All\n"
-                 << "0. Back\n";
+                << "2. Add Item\n"
+                << "3. Update Status\n"
+                << "4. Cancel Order\n"
+                << "5. Display Order\n"
+                << "6. List All\n"
+                << "0. Back\n";
 
             int choice = UI::readInt("Choice: ", 0, 6);
 
@@ -3085,9 +3323,9 @@ private:
                 int quantity = UI::readInt("Enter Quantity: ", 1, 1000000);
 
                 if (orderManager.addItem(
-                        orderId,
-                        OrderItem(itemId, menuItem->getName(),
-                                  quantity, menuItem->getPrice())))
+                    orderId,
+                    OrderItem(itemId, menuItem->getName(),
+                        quantity, menuItem->getPrice())))
                 {
                     UI::success("Item added to order.");
                 }
@@ -3096,29 +3334,61 @@ private:
             }
             else if (choice == 3)
             {
-                int orderId = UI::readInt("Enter Order ID: ", 1, 2147483647);
-                int status = UI::readInt(
-                    "New Status (0=New,1=Preparing,2=Ready,3=Served,4=Completed,5=Cancelled): ",
-                    0, 5);
+                UI::breadcrumb("Order Management > Update Status");
+                while (true)
+                {
+                    int orderId = UI::readInt("Enter Order ID: ", 1, 2147483647);
+                    if (!orderManager.searchOrder(orderId))
+                    {
+                        UI::error("Order not found.");
+                        cout << "Please enter a valid Order ID.\n";
+                        continue;
+                    }
 
-                if (orderManager.updateOrderStatus(orderId, (OrderStatus)status))
-                    UI::success("Order status updated successfully.");
+                    int status = UI::readInt(
+                        "New Status (0=New,1=Preparing,2=Ready,3=Served,4=Completed,5=Cancelled): ",
+                        0, 5);
 
+                    if (orderManager.updateOrderStatus(orderId, (OrderStatus)status))
+                        UI::success("Order status updated successfully.");
+                    break;
+                }
                 pause();
             }
             else if (choice == 4)
             {
-                int orderId = UI::readInt("Enter Order ID: ", 1, 2147483647);
+                UI::breadcrumb("Order Management > Cancel Order");
+                while (true)
+                {
+                    int orderId = UI::readInt("Enter Order ID: ", 1, 2147483647);
+                    if (!orderManager.searchOrder(orderId))
+                    {
+                        UI::error("Order not found.");
+                        cout << "Please enter a valid Order ID.\n";
+                        continue;
+                    }
 
-                if (orderManager.cancelOrder(orderId))
-                    UI::success("Order cancelled successfully.");
-
+                    if (orderManager.cancelOrder(orderId))
+                        UI::success("Order cancelled successfully.");
+                    break;
+                }
                 pause();
             }
             else if (choice == 5)
             {
-                int orderId = UI::readInt("Enter Order ID: ", 1, 2147483647);
-                orderManager.displayOrderDetails(orderId);
+                UI::breadcrumb("Order Management > Display Order");
+                while (true)
+                {
+                    int orderId = UI::readInt("Enter Order ID: ", 1, 2147483647);
+                    if (!orderManager.searchOrder(orderId))
+                    {
+                        UI::error("Order not found.");
+                        cout << "Please enter a valid Order ID.\n";
+                        continue;
+                    }
+                    orderManager.displayOrderDetails(orderId);
+                    break;
+                }
                 pause();
             }
             else if (choice == 6)
@@ -3135,14 +3405,15 @@ private:
         {
             clearScreen();
             menuTitle("EMPLOYEE MANAGEMENT");
+            UI::breadcrumb("Employee Management");
 
             cout << "1. Add Employee\n"
-                 << "2. Display All\n"
-                 << "3. Search\n"
-                 << "4. Update\n"
-                 << "5. Change Availability\n"
-                 << "6. Display By Role\n"
-                 << "0. Back\n";
+                << "2. Display All\n"
+                << "3. Search\n"
+                << "4. Update\n"
+                << "5. Change Availability\n"
+                << "6. Display By Role\n"
+                << "0. Back\n";
 
             int choice = UI::readInt("Choice: ", 0, 6);
             vector<Employee*>& employees = employeeManager.getEmployees();
@@ -3195,27 +3466,15 @@ private:
             }
             else if (choice == 3)
             {
-                int id = UI::readInt("Enter Employee ID: ", 1, 2147483647);
-                Employee* employee = employeeManager.findEmployeeByID(id);
-
-                if (employee)
-                    employee->displayInfo();
-                else
-                    UI::error("Employee not found.");
-
+                UI::breadcrumb("Employee Management > Search Employee");
+                Employee* employee = readEmployeeByID();
+                employee->displayInfo();
                 pause();
             }
             else if (choice == 4)
             {
-                int id = UI::readInt("Enter Employee ID: ", 1, 2147483647);
-                Employee* employee = employeeManager.findEmployeeByID(id);
-
-                if (!employee)
-                {
-                    UI::error("Employee not found.");
-                    pause();
-                    continue;
-                }
+                UI::breadcrumb("Employee Management > Update Employee");
+                Employee* employee = readEmployeeByID();
 
                 int field = UI::readInt(
                     "1. Update Name\n"
@@ -3236,15 +3495,8 @@ private:
             }
             else if (choice == 5)
             {
-                int id = UI::readInt("Enter Employee ID: ", 1, 2147483647);
-                Employee* employee = employeeManager.findEmployeeByID(id);
-
-                if (!employee)
-                {
-                    UI::error("Employee not found.");
-                    pause();
-                    continue;
-                }
+                UI::breadcrumb("Employee Management > Change Availability");
+                Employee* employee = readEmployeeByID();
 
                 int active = UI::readInt(
                     "New Availability (1=Available,0=Not Available): ", 0, 1);
@@ -3270,12 +3522,13 @@ private:
         {
             clearScreen();
             menuTitle("KITCHEN MANAGEMENT");
+            UI::breadcrumb("Kitchen Management");
 
             cout << "1. View Pending\n"
-                 << "2. Start Preparing\n"
-                 << "3. Mark Ready\n"
-                 << "4. Display Prepared\n"
-                 << "0. Back\n";
+                << "2. Start Preparing\n"
+                << "3. Mark Ready\n"
+                << "4. Display Prepared\n"
+                << "0. Back\n";
 
             int choice = UI::readInt("Choice: ", 0, 4);
 
@@ -3290,17 +3543,39 @@ private:
             }
             else if (choice == 2)
             {
-                int id = UI::readInt("Enter Order ID: ", 1, 2147483647);
+                UI::breadcrumb("Kitchen Management > Start Preparing");
+                while (true)
+                {
+                    int id = UI::readInt("Enter Order ID: ", 1, 2147483647);
+                    if (!orderManager.searchOrder(id))
+                    {
+                        UI::error("Order not found.");
+                        cout << "Please enter a valid Order ID.\n";
+                        continue;
+                    }
 
-                if (orderManager.updateOrderStatus(id, OrderStatus::Preparing))
-                    UI::success("Order is now being prepared.");
+                    if (orderManager.updateOrderStatus(id, OrderStatus::Preparing))
+                        UI::success("Order is now being prepared.");
+                    break;
+                }
             }
             else if (choice == 3)
             {
-                int id = UI::readInt("Enter Order ID: ", 1, 2147483647);
+                UI::breadcrumb("Kitchen Management > Mark Ready");
+                while (true)
+                {
+                    int id = UI::readInt("Enter Order ID: ", 1, 2147483647);
+                    if (!orderManager.searchOrder(id))
+                    {
+                        UI::error("Order not found.");
+                        cout << "Please enter a valid Order ID.\n";
+                        continue;
+                    }
 
-                if (orderManager.updateOrderStatus(id, OrderStatus::Ready))
-                    UI::success("Order is ready.");
+                    if (orderManager.updateOrderStatus(id, OrderStatus::Ready))
+                        UI::success("Order is ready.");
+                    break;
+                }
             }
             else if (choice == 4)
             {
@@ -3317,13 +3592,14 @@ private:
         {
             clearScreen();
             menuTitle("PAYMENT MANAGEMENT");
+            UI::breadcrumb("Payment Management");
 
             cout << "1. Process Payment\n"
-                 << "2. Display Details\n"
-                 << "3. Refund\n"
-                 << "4. Receipt\n"
-                 << "5. History\n"
-                 << "0. Back\n";
+                << "2. Display Details\n"
+                << "3. Refund\n"
+                << "4. Receipt\n"
+                << "5. History\n"
+                << "0. Back\n";
 
             int choice = UI::readInt("Choice: ", 0, 5);
 
@@ -3334,8 +3610,8 @@ private:
 
             if (choice == 1)
             {
-                int orderId = UI::readInt("Enter Order ID: ", 1, 2147483647);
-                Order* order = orderManager.searchOrder(orderId);
+                Order* order = readOrderByID();
+                int orderId = order->getOrderID();
 
                 if (!order)
                 {
@@ -3351,6 +3627,24 @@ private:
                     continue;
                 }
 
+                bool alreadyPaid = false;
+                for (const auto& payment : paymentManager.getPayments())
+                {
+                    if (payment.getOrderID() == orderId &&
+                        payment.getStatus() == PaymentStatus::Completed)
+                    {
+                        alreadyPaid = true;
+                        break;
+                    }
+                }
+
+                if (alreadyPaid)
+                {
+                    UI::error("This Order has already been paid.");
+                    pause();
+                    continue;
+                }
+
                 double expected = order->getTotalPrice();
 
                 if (expected <= 0)
@@ -3359,6 +3653,13 @@ private:
                     pause();
                     continue;
                 }
+
+                cout << "\n====================================\n"
+                    << "          PAYMENT SUMMARY\n"
+                    << "====================================\n"
+                    << "Order ID      : " << orderId << "\n"
+                    << "Amount to Pay : " << fixed << setprecision(2) << expected << "\n"
+                    << "====================================\n";
 
                 double amount = UI::readDouble("Enter Amount: ", 0.01);
 
@@ -3394,18 +3695,51 @@ private:
             }
             else if (choice == 2)
             {
-                int paymentId = UI::readInt("Enter Payment ID: ", 1, 2147483647);
-                paymentManager.displayPaymentDetails(paymentId);
+                UI::breadcrumb("Payment Management > Display Details");
+                while (true)
+                {
+                    int paymentId = UI::readInt("Enter Payment ID: ", 1, 2147483647);
+                    if (!paymentManager.searchPayment(paymentId))
+                    {
+                        UI::error("Payment not found.");
+                        cout << "Please enter a valid Payment ID.\n";
+                        continue;
+                    }
+                    paymentManager.displayPaymentDetails(paymentId);
+                    break;
+                }
             }
             else if (choice == 3)
             {
-                int paymentId = UI::readInt("Enter Payment ID: ", 1, 2147483647);
-                paymentManager.refundPayment(paymentId);
+                UI::breadcrumb("Payment Management > Refund");
+                while (true)
+                {
+                    int paymentId = UI::readInt("Enter Payment ID: ", 1, 2147483647);
+                    if (!paymentManager.searchPayment(paymentId))
+                    {
+                        UI::error("Payment not found.");
+                        cout << "Please enter a valid Payment ID.\n";
+                        continue;
+                    }
+                    paymentManager.refundPayment(paymentId);
+                    break;
+                }
             }
             else if (choice == 4)
             {
-                int paymentId = UI::readInt("Enter Payment ID: ", 1, 2147483647);
-                paymentManager.generateReceipt(paymentId);
+                UI::breadcrumb("Payment Management > Receipt");
+                while (true)
+                {
+                    int paymentId = UI::readInt("Enter Payment ID: ", 1, 2147483647);
+                    if (!paymentManager.searchPayment(paymentId))
+                    {
+                        UI::error("Payment not found.");
+                        cout << "Please enter a valid Payment ID.\n";
+                        continue;
+                    }
+                    paymentManager.generateReceipt(paymentId);
+                    break;
+                }
             }
             else if (choice == 5)
             {
@@ -3422,12 +3756,13 @@ private:
         {
             clearScreen();
             menuTitle("DELIVERY MANAGEMENT");
+            UI::breadcrumb("Delivery Management");
 
             cout << "1. Assign Delivery\n"
-                 << "2. Track Status\n"
-                 << "3. Update Status\n"
-                 << "4. View All\n"
-                 << "0. Back\n";
+                << "2. Track Status\n"
+                << "3. Update Status\n"
+                << "4. View All\n"
+                << "0. Back\n";
 
             int choice = UI::readInt("Choice: ", 0, 4);
 
@@ -3495,20 +3830,43 @@ private:
             }
             else if (choice == 2)
             {
-                int deliveryId = UI::readInt("Enter Delivery ID: ", 1, 2147483647);
-                deliveryManager.trackDeliveryStatus(deliveryId);
+                UI::breadcrumb("Delivery Management > Track Status");
+                while (true)
+                {
+                    int deliveryId = UI::readInt("Enter Delivery ID: ", 1, 2147483647);
+                    if (!deliveryManager.searchDelivery(deliveryId))
+                    {
+                        UI::error("Delivery not found.");
+                        cout << "Please enter a valid Delivery ID.\n";
+                        continue;
+                    }
+                    deliveryManager.trackDeliveryStatus(deliveryId);
+                    break;
+                }
             }
             else if (choice == 3)
             {
-                int deliveryId = UI::readInt("Enter Delivery ID: ", 1, 2147483647);
-                int status = UI::readInt(
-                    "New Status (0=Assigned,1=OnTheWay,2=Delivered,3=Cancelled): ",
-                    0, 3);
-
-                if (deliveryManager.updateDeliveryStatus(
-                        deliveryId, (DeliveryStatus)status))
+                UI::breadcrumb("Delivery Management > Update Status");
+                while (true)
                 {
-                    UI::success("Delivery status updated successfully.");
+                    int deliveryId = UI::readInt("Enter Delivery ID: ", 1, 2147483647);
+                    if (!deliveryManager.searchDelivery(deliveryId))
+                    {
+                        UI::error("Delivery not found.");
+                        cout << "Please enter a valid Delivery ID.\n";
+                        continue;
+                    }
+
+                    int status = UI::readInt(
+                        "New Status (0=Assigned,1=OnTheWay,2=Delivered,3=Cancelled): ",
+                        0, 3);
+
+                    if (deliveryManager.updateDeliveryStatus(
+                        deliveryId, (DeliveryStatus)status))
+                    {
+                        UI::success("Delivery status updated successfully.");
+                    }
+                    break;
                 }
             }
             else if (choice == 4)
@@ -3526,13 +3884,14 @@ private:
         {
             clearScreen();
             menuTitle("REPORTS");
+            UI::breadcrumb("Reports");
 
             cout << "1. Daily Sales\n"
-                 << "2. Monthly Revenue\n"
-                 << "3. Top Selling Items\n"
-                 << "4. Employee Performance\n"
-                 << "5. Delivery Report\n"
-                 << "0. Back\n";
+                << "2. Monthly Revenue\n"
+                << "3. Top Selling Items\n"
+                << "4. Employee Performance\n"
+                << "5. Delivery Report\n"
+                << "0. Back\n";
 
             int choice = UI::readInt("Choice: ", 0, 5);
 
